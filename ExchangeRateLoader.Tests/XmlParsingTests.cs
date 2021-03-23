@@ -12,35 +12,34 @@ namespace ExchangeRateLoader.Tests
         [Fact]
         public void SampleParsedSuccessfully()
         {
-            var serializer = new XmlSerializer(typeof(Envelope));
             var data = File.Open("./assets/sample.xml", FileMode.Open);
-            var result = serializer.Deserialize(data);
-            result.Should().NotBe(null).And.BeOfType<Envelope>();
-            var envelope = (Envelope) result!;
+            var result = EnvelopeParser.Parse(data);
+            
+            result.Should().NotBeNull();
 
-            envelope.Subject.Should().Be("Reference rates");
-            envelope.Sender.Name.Should().Be("European Central Bank");
-            envelope.Data.Value.Count.Should().Be(3);
-            envelope.Data.Value[0].Time.Should().Be("2021-03-23");
-            envelope.Data.Value[0].Values.Count.Should().Be(2);
-            envelope.Data.Value[0].Values[0].Currency.Should().Be("USD");
-            envelope.Data.Value[0].Values[0].Rate.Should().Be("1.1883");
-            envelope.Data.Value[0].Values[1].Currency.Should().Be("JPY");
-            envelope.Data.Value[0].Values[1].Rate.Should().Be("128.99");
+            result.Subject.Should().Be("Reference rates");
+            result.Sender.Name.Should().Be("European Central Bank");
+            result.Data.Value.Count.Should().Be(3);
+            result.Data.Value[0].Time.Should().Be("2021-03-23");
+            result.Data.Value[0].Values.Count.Should().Be(2);
+            result.Data.Value[0].Values[0].Currency.Should().Be("USD");
+            result.Data.Value[0].Values[0].Rate.Should().Be("1.1883");
+            result.Data.Value[0].Values[1].Currency.Should().Be("JPY");
+            result.Data.Value[0].Values[1].Rate.Should().Be("128.99");
 
-            envelope.Data.Value[1].Time.Should().Be("2021-03-22");
-            envelope.Data.Value[1].Values.Count.Should().Be(2);
-            envelope.Data.Value[1].Values[0].Currency.Should().Be("USD");
-            envelope.Data.Value[1].Values[0].Rate.Should().Be("1.1926");
-            envelope.Data.Value[1].Values[1].Currency.Should().Be("JPY");
-            envelope.Data.Value[1].Values[1].Rate.Should().Be("129.77");
+            result.Data.Value[1].Time.Should().Be("2021-03-22");
+            result.Data.Value[1].Values.Count.Should().Be(2);
+            result.Data.Value[1].Values[0].Currency.Should().Be("USD");
+            result.Data.Value[1].Values[0].Rate.Should().Be("1.1926");
+            result.Data.Value[1].Values[1].Currency.Should().Be("JPY");
+            result.Data.Value[1].Values[1].Rate.Should().Be("129.77");
 
-            envelope.Data.Value[2].Time.Should().Be("2021-03-19");
-            envelope.Data.Value[2].Values.Count.Should().Be(2);
-            envelope.Data.Value[2].Values[0].Currency.Should().Be("USD");
-            envelope.Data.Value[2].Values[0].Rate.Should().Be("1.1891");
-            envelope.Data.Value[2].Values[1].Currency.Should().Be("JPY");
-            envelope.Data.Value[2].Values[1].Rate.Should().Be("129.54");
+            result.Data.Value[2].Time.Should().Be("2021-03-19");
+            result.Data.Value[2].Values.Count.Should().Be(2);
+            result.Data.Value[2].Values[0].Currency.Should().Be("USD");
+            result.Data.Value[2].Values[0].Rate.Should().Be("1.1891");
+            result.Data.Value[2].Values[1].Currency.Should().Be("JPY");
+            result.Data.Value[2].Values[1].Rate.Should().Be("129.54");
         }
     }
 }
