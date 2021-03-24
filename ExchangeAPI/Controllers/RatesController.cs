@@ -70,8 +70,9 @@ namespace ExchangeAPI.Controllers
                 @base,
                 start_at = start,
                 end_at = end,
-                rates = result.ToDictionary(x => x.Date.ToString("yyyy-MM-dd"),
-                    x => x.Rates.ToDictionary(r => r.Currency, r => r.Rate))
+                rates = result.Where(x => x.Rates.Count > 0)
+                    .ToDictionary(x => x.Date.ToString("yyyy-MM-dd"),
+                        x => x.Rates.ToDictionary(r => r.Currency, r => r.Rate))
             });
         }
 
