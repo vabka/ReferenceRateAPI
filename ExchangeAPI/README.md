@@ -75,3 +75,8 @@ GO
 ```
 ## Как загрузить начальные данные перед первым запуском?
 Запустить проект ExchangeRateLoader.CLI с параметром init
+
+```
+cd ../ExchangeRateLoader.CLI
+dotnet run -- init
+```

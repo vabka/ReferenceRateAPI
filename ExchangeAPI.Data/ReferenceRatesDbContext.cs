@@ -21,7 +21,7 @@ namespace ExchangeAPI.Data
             if (Database.IsSqlite())
                 modelBuilder.Entity<ExchangeRate>()
                     .Property(x => x.Date)
-                    .HasConversion(v => v.Date.ToFileTime(),
+                    .HasConversion(v => v.ToUniversalTime().ToFileTime(),
                         v => DateTimeOffset.FromFileTime(v));
         }
     }

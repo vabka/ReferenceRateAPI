@@ -37,6 +37,7 @@ namespace ExchangeAPI
                     var conf = s.GetRequiredService<IConfiguration>().GetSection("Database");
                     var type = conf.GetValue<DatabaseType>("Type");
                     var connectionString = conf.GetValue<string>("ConnectionString");
+                    
                     switch (type)
                     {
                         case DatabaseType.SqlServer:
@@ -57,6 +58,7 @@ namespace ExchangeAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseStaticFiles();
             app.UseRouting();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }

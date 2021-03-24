@@ -27,9 +27,7 @@ namespace ExchangeAPI.Service
             var data = await _dbContext.Rates
                 .AsNoTracking()
                 .Where(x => x.Date == time &&
-                            (currencies != null &&
-                             currencies.Contains(x.Currency) ||
-                             x.Currency == @base))
+                            (currencies == null || currencies.Contains(x.Currency) || x.Currency == @base))
                 .Select(x => new CurrencyRate(x.Currency, x.Rate))
                 .ToArrayAsync();
             return new ReferenceRate
@@ -46,17 +44,14 @@ namespace ExchangeAPI.Service
                 .Select(x => x.Date)
                 .FirstAsync();
 
-        public async Task<ReferenceRate[]> GetReferenceRatesHistoryAsync(string baseCurrency,
+        public async Task<ReferenceRate[]> GetReferenceRatesHistoryAsync(string @base,
             DateTimeOffset start,
             DateTimeOffset end,
             string[]? currencies = null)
         {
-            var query = _dbContext.Rates
+            var data = await _dbContext.Rates
                 .Where(x => x.Date >= start && x.Date <= end &&
-                            (currencies != null &&
-                             currencies.Contains(x.Currency) ||
-                             x.Currency == baseCurrency));
-            var data = await query.Select(x => new
+                            (currencies == null || currencies.Contains(x.Currency) || x.Currency == @base)).Select(x => new
                 {
                     x.Currency,
                     x.Date,
@@ -67,7 +62,7 @@ namespace ExchangeAPI.Service
                 .Select(x => new ReferenceRate
                 {
                     Date = x.Key,
-                    Rates = ConvertWhenNecessary(baseCurrency, x.Select(e => new CurrencyRate(e.Currency, e.Rate)))
+                    Rates = ConvertWhenNecessary(@base, x.Select(e => new CurrencyRate(e.Currency, e.Rate)))
                 })
                 .ToArray();
         }

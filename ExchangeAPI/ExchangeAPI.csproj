@@ -6,13 +6,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ExchangeAPI.Service\ExchangeAPI.Service.csproj"/>
-        <ProjectReference Include="..\ExchangeRateLoader\ExchangeRateLoader.csproj"/>
+        <ProjectReference Include="..\ExchangeAPI.Service\ExchangeAPI.Service.csproj" />
+        <ProjectReference Include="..\ExchangeRateLoader\ExchangeRateLoader.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.4"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.4"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.4" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="wwwroot\favicon.ico" />
     </ItemGroup>
 
 </Project>
