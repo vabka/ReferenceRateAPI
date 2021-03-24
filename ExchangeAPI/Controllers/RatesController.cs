@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -35,35 +36,40 @@ namespace ExchangeAPI.Controllers
 
 
         [HttpGet("/{date}")]
-        public async Task<ActionResult<ReferenceRateResponse>> GetAtDate([FromRoute(Name = "date")] DateTimeOffset time,
+        public async Task<ActionResult<ReferenceRateResponse>> GetAtDate([FromRoute(Name = "date")] string? time,
             [FromQuery(Name = "base")] string baseCurrency = "EUR",
             [FromQuery(Name = "symbols")] string? symbols = null)
         {
+            if (time == null || !DateTimeOffset.TryParseExact(time, "yyyy-MM-dd", null,
+                DateTimeStyles.AssumeUniversal, out var exactDay))
+                return BadRequest("'date' missing");
             var (@base, currencies) = ParseCurrencies(baseCurrency, symbols);
-            var result = await _referenceRateService.GetReferenceRate(@base, currencies, time);
-            if (result.Rates.Count == 0)
+            var result = await _referenceRateService.GetReferenceRate(@base, currencies, exactDay);
+            if (result == null)
                 return NotFound();
             return Ok(MapToResponse(result, @base));
         }
 
         [HttpGet("/history")]
-        public async Task<ActionResult> GetHistory([FromRoute(Name = "start_at")] DateTimeOffset? start,
-            [FromRoute(Name = "end_at")] DateTimeOffset? end,
+        public async Task<ActionResult> GetHistory([FromRoute(Name = "start_at")] string? start,
+            [FromRoute(Name = "end_at")] string? end,
             [FromQuery(Name = "base")] string baseCurrency = "EUR",
             [FromQuery(Name = "symbols")] string? symbols = null)
         {
-            if (start == null)
+            if (start == null || !DateTimeOffset.TryParseExact(start, "yyyy-MM-dd", null,
+                DateTimeStyles.AssumeUniversal, out var startTime))
                 return BadRequest("'start_at' missing");
-            if (end == null)
+            if (end == null || !DateTimeOffset.TryParseExact(end, "yyyy-MM-dd", null,
+                DateTimeStyles.AssumeUniversal, out var endTime))
                 return BadRequest("'end_at' missing");
             var (@base, currencies) = ParseCurrencies(baseCurrency, symbols);
             var result =
-                await _referenceRateService.GetReferenceRatesHistoryAsync(@base, start.Value, end.Value, currencies);
+                await _referenceRateService.GetReferenceRatesHistoryAsync(@base, startTime, endTime, currencies);
             return Ok(new
             {
                 @base,
-                start_at = start.Value.ToString("yyyy-MM-dd"),
-                end_at = end.Value.ToString("yyyy-MM-dd"),
+                start_at = start,
+                end_at = end,
                 rates = result.ToDictionary(x => x.Date.ToString("yyyy-MM-dd"),
                     x => x.Rates.ToDictionary(r => r.Currency, r => r.Rate))
             });

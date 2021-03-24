@@ -19,9 +19,9 @@ namespace ExchangeAPI.Service
         public async Task<ReferenceRate> GetLatestReferenceRateAsync(
             string @base,
             string[]? currencies)
-            => await GetReferenceRate(@base, currencies, await GetLatestReferenceRateDate());
+            => (await GetReferenceRate(@base, currencies, await GetLatestReferenceRateDate()))!;
 
-        public async Task<ReferenceRate> GetReferenceRate(string @base, string[]? currencies,
+        public async Task<ReferenceRate?> GetReferenceRate(string @base, string[]? currencies,
             DateTimeOffset time)
         {
             var data = await _dbContext.Rates
@@ -30,6 +30,8 @@ namespace ExchangeAPI.Service
                             (currencies == null || currencies.Contains(x.Currency) || x.Currency == @base))
                 .Select(x => new CurrencyRate(x.Currency, x.Rate))
                 .ToArrayAsync();
+            if (data.Length == 0)
+                return null;
             return new ReferenceRate
             {
                 Date = time,
