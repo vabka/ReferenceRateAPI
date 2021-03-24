@@ -51,8 +51,8 @@ namespace ExchangeAPI.Controllers
         }
 
         [HttpGet("/history")]
-        public async Task<ActionResult> GetHistory([FromRoute(Name = "start_at")] string? start,
-            [FromRoute(Name = "end_at")] string? end,
+        public async Task<ActionResult> GetHistory([FromQuery(Name = "start_at")] string? start,
+            [FromQuery(Name = "end_at")] string? end,
             [FromQuery(Name = "base")] string baseCurrency = "EUR",
             [FromQuery(Name = "symbols")] string? symbols = null)
         {
