@@ -33,7 +33,7 @@ namespace ExchangeAPI.Service
             return new ReferenceRate
             {
                 Date = time,
-                Rates = data
+                Rates = ConvertWhenNecessary(@base, data).ToArray()
             };
         }
 
@@ -51,12 +51,13 @@ namespace ExchangeAPI.Service
         {
             var data = await _dbContext.Rates
                 .Where(x => x.Date >= start && x.Date <= end &&
-                            (currencies == null || currencies.Contains(x.Currency) || x.Currency == @base)).Select(x => new
-                {
-                    x.Currency,
-                    x.Date,
-                    x.Rate
-                })
+                            (currencies == null || currencies.Contains(x.Currency) || x.Currency == @base)).Select(x =>
+                    new
+                    {
+                        x.Currency,
+                        x.Date,
+                        x.Rate
+                    })
                 .ToArrayAsync();
             return data.GroupBy(x => x.Date)
                 .Select(x => new ReferenceRate

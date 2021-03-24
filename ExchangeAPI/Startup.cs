@@ -17,29 +17,15 @@ namespace ExchangeAPI
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHostedService<LoaderHostedService>();
-            services.AddScoped<ReferenceRateService>();
             services.AddLogging();
-            services.AddHttpClient();
-            services.AddScoped<Loader>();
-            services.AddSingleton(s =>
-            {
-                var conf = s.GetRequiredService<IConfiguration>().GetSection("ReferenceRates");
-                var history = conf.GetValue<string>("HistoricalDataUri");
-                var fresh = conf.GetValue<string>("FreshDataUri");
-                return new LoaderConfig
-                {
-                    HistoricalDataUri = history,
-                    FreshDataUri = fresh
-                };
-            });
+
             services.AddDbContext<ReferenceRatesDbContext>(
                 (s, o) =>
                 {
                     var conf = s.GetRequiredService<IConfiguration>().GetSection("Database");
                     var type = conf.GetValue<DatabaseType>("Type");
                     var connectionString = conf.GetValue<string>("ConnectionString");
-                    
+
                     switch (type)
                     {
                         case DatabaseType.SqlServer:
@@ -51,8 +37,27 @@ namespace ExchangeAPI
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
-                }
+                }, ServiceLifetime.Transient,
+                ServiceLifetime.Singleton
             );
+
+            services.AddHttpClient();
+            services.AddSingleton(s =>
+            {
+                var conf = s.GetRequiredService<IConfiguration>().GetSection("ReferenceRates");
+                var history = conf.GetValue<string>("HistoricalDataUri");
+                var fresh = conf.GetValue<string>("FreshDataUri");
+                return new LoaderConfig
+                {
+                    HistoricalDataUri = history,
+                    FreshDataUri = fresh
+                };
+            });
+            services.AddSingleton<Loader>();
+            services.AddHostedService<LoaderHostedService>();
+
+            services.AddScoped<ReferenceRateService>();
+
             services.AddControllers();
         }
 
