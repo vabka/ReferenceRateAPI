@@ -13,10 +13,10 @@ namespace ExchangeAPI.HostedServices
         private readonly CancellationTokenSource _cancellationTokenSource;
         private Task? _task;
 
-        public LoaderHostedService(Loader loader, CancellationTokenSource cancellationTokenSource)
+        public LoaderHostedService(Loader loader)
         {
             _loader = loader;
-            _cancellationTokenSource = cancellationTokenSource;
+            _cancellationTokenSource = new CancellationTokenSource();
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
