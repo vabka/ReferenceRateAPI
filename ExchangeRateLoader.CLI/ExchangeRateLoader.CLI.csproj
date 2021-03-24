@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+        <PublishSingleFile>true</PublishSingleFile>
+        <AssemblyName>loader</AssemblyName>
+        <PublishTrimmed Condition="Configuration == 'Release'">true</PublishTrimmed>
+        <PublishReadyToRun Condition="Configuration == 'Release'">true</PublishReadyToRun>
+        <DebugType Condition="Configuration == 'Debug'">embedded</DebugType>
+        <DebugType Condition="Configuration == 'Release'">none</DebugType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ExchangeRateLoader\ExchangeRateLoader.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20574.7" />
+    </ItemGroup>
+
+</Project>

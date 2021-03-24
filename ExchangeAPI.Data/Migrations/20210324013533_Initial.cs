@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ExchangeAPI.Data.Migrations
 {
@@ -11,7 +10,7 @@ namespace ExchangeAPI.Data.Migrations
                 name: "Rates",
                 columns: table => new
                 {
-                    Date = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
+                    Date = table.Column<long>(type: "INTEGER", nullable: false),
                     Currency = table.Column<string>(type: "TEXT", maxLength: 3, nullable: false),
                     Base = table.Column<string>(type: "TEXT", maxLength: 3, nullable: false),
                     Rate = table.Column<decimal>(type: "TEXT", nullable: false)
