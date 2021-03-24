@@ -19,7 +19,6 @@ namespace ExchangeRateLoader
                 Date = date,
                 Rate = decimal.Parse(exchangeRate.Rate),
                 Currency = exchangeRate.Currency,
-                Base = "EUR"
             };
     }
 }

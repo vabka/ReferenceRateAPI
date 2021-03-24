@@ -3,5 +3,8 @@
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::4246562E-B053-4D6D-8E2F-4E309ECEB3F0::net5.0::ExchangeRateLoader.Tests.XmlParsingTests.SampleParsedSuccessfully&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::4246562E-B053-4D6D-8E2F-4E309ECEB3F0::net5.0::ExchangeRateLoader.Tests.EnvelopeConvertingTests.CorrectParsing&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::E4A6E3E8-11AC-4E01-AF36-B835ABC375F8::net5.0::ExchangeAPI.Service.Tests.ReferenceRateServiceTests.LatestReferenceRate&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::E4A6E3E8-11AC-4E01-AF36-B835ABC375F8::net5.0::ExchangeAPI.Service.Tests.ReferenceRateServiceTests.LatestReferenceRateFiltered&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::E4A6E3E8-11AC-4E01-AF36-B835ABC375F8::net5.0::ExchangeAPI.Service.Tests.ReferenceRateServiceTests.LatestReferenceRateWithOtherBase&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

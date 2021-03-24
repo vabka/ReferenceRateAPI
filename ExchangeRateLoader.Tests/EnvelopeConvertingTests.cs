@@ -53,17 +53,14 @@ namespace ExchangeRateLoader.Tests
 
             data.Length.Should().Be(3);
             data[0].Date.Should().Be(new DateTimeOffset(2021, 01, 01, 0, 0, 0, TimeSpan.FromHours(0)));
-            data[0].Base.Should().Be("EUR");
             data[0].Currency.Should().Be("USD");
             data[0].Rate.Should().Be(1.0m);
 
             data[1].Date.Should().Be(new DateTimeOffset(2021, 01, 01, 0, 0, 0, TimeSpan.FromHours(0)));
-            data[1].Base.Should().Be("EUR");
             data[1].Currency.Should().Be("JPY");
             data[1].Rate.Should().Be(1.5m);
 
             data[2].Date.Should().Be(new DateTimeOffset(2020, 01, 01, 0, 0, 0, TimeSpan.FromHours(0)));
-            data[2].Base.Should().Be("EUR");
             data[2].Currency.Should().Be("USD");
             data[2].Rate.Should().Be(1.1m);
         }

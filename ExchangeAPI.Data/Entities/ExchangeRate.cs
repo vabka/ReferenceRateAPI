@@ -10,7 +10,6 @@ namespace ExchangeAPI.Data.Entities
     {
         public DateTimeOffset Date { get; init; }
         [MaxLength(3)] public string Currency { get; init; }
-        [MaxLength(3)] public string Base { get; init; }
         public decimal Rate { get; init; }
     }
 }

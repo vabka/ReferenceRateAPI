@@ -3,53 +3,58 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ExchangeAPI.Data;
-using ExchangeAPI.Service;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExchangeAPI.Service
 {
     public class ReferenceRateService
     {
-        private readonly ExchangeDataContext _dbContext;
+        private readonly ReferenceRatesDbContext _dbContext;
 
-        public ReferenceRateService(ExchangeDataContext dbContext)
+        public ReferenceRateService(ReferenceRatesDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public async Task<LatestReferenceRate> GetLatestExchangeRatesAsync(string baseCurrency,
-            IReadOnlySet<string>? foreignCurrencies = null)
+        public async Task<ReferenceRate> GetLatestReferenceRateAsync(
+            string @base,
+            string[]? currencies)
+            => await GetReferenceRate(@base, currencies, await GetLatestReferenceRateDate());
+
+        public async Task<ReferenceRate> GetReferenceRate(string @base, string[]? currencies,
+            DateTimeOffset time)
         {
-            var lastDate = await _dbContext.Rates
-                .AsNoTracking()
-                .OrderByDescending(x => x.Date)
-                .Select(x => x.Date)
-                .FirstAsync();
             var data = await _dbContext.Rates
                 .AsNoTracking()
-                .Where(x => x.Date == lastDate &&
-                            (foreignCurrencies != null &&
-                             foreignCurrencies.Contains(x.Currency) ||
-                             x.Currency == baseCurrency))
+                .Where(x => x.Date == time &&
+                            (currencies != null &&
+                             currencies.Contains(x.Currency) ||
+                             x.Currency == @base))
                 .Select(x => new CurrencyRate(x.Currency, x.Rate))
                 .ToArrayAsync();
-            return new LatestReferenceRate
+            return new ReferenceRate
             {
-                Base = baseCurrency,
-                Date = lastDate,
+                Date = time,
                 Rates = data
             };
         }
 
-        public async Task<HistoricalExchangeRate> GetHistoricalExchangeRatesAsync(string baseCurrency,
+        private async Task<DateTimeOffset> GetLatestReferenceRateDate() =>
+            await _dbContext.Rates
+                .AsNoTracking()
+                .OrderByDescending(x => x.Date)
+                .Select(x => x.Date)
+                .FirstAsync();
+
+        public async Task<ReferenceRate[]> GetReferenceRatesHistoryAsync(string baseCurrency,
             DateTimeOffset start,
             DateTimeOffset end,
-            string[]? foreignCurrencies = null)
+            string[]? currencies = null)
         {
             var query = _dbContext.Rates
                 .Where(x => x.Date >= start && x.Date <= end &&
-                            (foreignCurrencies != null &&
-                             foreignCurrencies.Contains(x.Currency) ||
+                            (currencies != null &&
+                             currencies.Contains(x.Currency) ||
                              x.Currency == baseCurrency));
             var data = await query.Select(x => new
                 {
@@ -58,19 +63,13 @@ namespace ExchangeAPI.Service
                     x.Rate
                 })
                 .ToArrayAsync();
-            return new HistoricalExchangeRate
-            {
-                Base = baseCurrency,
-                Start = start,
-                End = end,
-                Rates = data.GroupBy(x => x.Date)
-                    .Select(x => new ExchangeRatesAtDate
-                    {
-                        Date = x.Key,
-                        Rates = ConvertWhenNecessary(baseCurrency, x.Select(e => new CurrencyRate(e.Currency, e.Rate)))
-                    })
-                    .ToArray()
-            };
+            return data.GroupBy(x => x.Date)
+                .Select(x => new ReferenceRate
+                {
+                    Date = x.Key,
+                    Rates = ConvertWhenNecessary(baseCurrency, x.Select(e => new CurrencyRate(e.Currency, e.Rate)))
+                })
+                .ToArray();
         }
 
         private static CurrencyRate[] ConvertWhenNecessary(string baseCurrency, IEnumerable<CurrencyRate> rates)
@@ -89,18 +88,4 @@ namespace ExchangeAPI.Service
                 yield return new CurrencyRate(currencyRate.Currency, currencyRate.Rate * euros);
         }
     }
-}
-
-public record HistoricalExchangeRate
-{
-    public string Base { get; init; }
-    public DateTimeOffset Start { get; init; }
-    public DateTimeOffset End { get; init; }
-    public ExchangeRatesAtDate[] Rates { get; init; }
-}
-
-public struct ExchangeRatesAtDate
-{
-    public DateTimeOffset Date { get; init; }
-    public CurrencyRate[] Rates { get; init; }
 }
