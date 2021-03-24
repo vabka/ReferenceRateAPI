@@ -1,5 +1,6 @@
 using System;
 using ExchangeAPI.Data;
+using ExchangeAPI.HostedServices;
 using ExchangeAPI.Service;
 using ExchangeRateLoader;
 using Microsoft.AspNetCore.Builder;
@@ -16,6 +17,7 @@ namespace ExchangeAPI
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHostedService<LoaderHostedService>();
             services.AddScoped<ReferenceRateService>();
             services.AddLogging();
             services.AddHttpClient();
