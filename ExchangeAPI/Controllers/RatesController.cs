@@ -26,12 +26,7 @@ namespace ExchangeAPI.Controllers
         {
             var (@base, currencies) = ParseCurrencies(baseCurrency, symbols);
             var result = await _referenceRateService.GetLatestReferenceRateAsync(@base, currencies);
-            return Ok(new
-            {
-                @base,
-                date = result.Date.ToString("yyyy-MM-dd"),
-                rates = result.Rates.ToDictionary(x => x.Currency, x => x.Rate)
-            });
+            return Ok(MapToResponse(result, @base));
         }
 
 
